@@ -37,5 +37,8 @@ import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 public class Main {
-
+    public static void main(String[] args) {
+        Server server = new Server();
+        server.createServer(8000);
+    }
 }

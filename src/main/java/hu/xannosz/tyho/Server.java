@@ -22,7 +22,6 @@ public class Server {
             server = HttpServer.create(new InetSocketAddress(port), 0);
             server.createContext("/", new MainHandler());
             server.createContext("/css", new CSSHandler());
-            server.createContext("/rest", new MainHandler());
             server.setExecutor(null);
             server.start();
         } catch (IOException e) {
@@ -44,7 +43,11 @@ public class Server {
                 response = new Douplet<>(200, String.format(Constatns.MODIFY, map.get("css"), map.get("success"), map.get("failed")));
             } else if (page.equals("execute")) {
                 response = new Douplet<>(200, execute(map));
-            } else {
+            } else if (page.equals("justOut")) {
+                response = new Douplet<>(200, "Map: "+map);
+            } else if (page.equals("validate")) {
+                response = new Douplet<>(200, db.getAccess(map.get("token"),map.get("access")));
+            } else{
                 response = new Douplet<>(404, page + " page not found.");
             }
             byte[] responseSyntax = response.getSecond().getBytes(Constatns.ENCODING);
@@ -107,7 +110,7 @@ public class Server {
             }
         }
         db.writeData();
-        return String.format(Constatns.REDIRECT, token, token == null ? map.get("failed") : map.get("success"), message);
+        return String.format(Constatns.REDIRECT, token == null ? map.get("failed") : map.get("success"),token, message);
     }
 
     public class CSSHandler implements HttpHandler {

@@ -77,7 +77,13 @@ public class Constatns {
             "</head>\n" +
             "<body>\n" +
             "<div>\n" +
-            "Token: %s<br>Redirect: %s<br>Message: %s" +
+            "<form name=\"inputForm\" action=\"%s\" method=\"post\">\n" +
+            "    <input type=\"hidden\" name=\"token\" value=\"%s\" />\n" +
+            "    <input type=\"hidden\" name=\"message\" value=\"%s\" />\n" +
+            "</form>"+
+            "<script type=\"text/javascript\">\n" +
+            "    document.inputForm.submit();\n" +
+            "</script>"+
             "</div>\n" +
             "</body>\n" +
             "</html>";

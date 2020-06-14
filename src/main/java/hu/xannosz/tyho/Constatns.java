@@ -16,6 +16,9 @@ public class Constatns {
             "  <input type=\"password\" id=\"pwd\" name=\"pwd\"><br><br>\n" +
             "  <input type=\"submit\" value=\"Submit\">\n" +
             "  <input type=\"submit\" value=\"Cancel\">\n" +
+            "  <input type=\"hidden\" name=\"success\" value=\"%s\">\n" +
+            "  <input type=\"hidden\" name=\"failed\" value=\"%s\">\n" +
+            "  <input type=\"hidden\" name=\"type\" value=\"login\">\n" +
             "</form> \n" +
             "</div>\n" +
             "</body>\n" +
@@ -36,6 +39,9 @@ public class Constatns {
             "  <input type=\"password\" id=\"pwda\" name=\"pwda\"><br><br>\n" +
             "  <input type=\"submit\" value=\"Submit\">\n" +
             "  <input type=\"submit\" value=\"Cancel\">\n" +
+            "  <input type=\"hidden\" name=\"success\" value=\"%s\">\n" +
+            "  <input type=\"hidden\" name=\"failed\" value=\"%s\">\n" +
+            "  <input type=\"hidden\" name=\"type\" value=\"registration\">\n" +
             "</form> \n" +
             "</div>\n" +
             "</body>\n" +
@@ -58,7 +64,20 @@ public class Constatns {
             "  <input type=\"password\" id=\"npwda\" name=\"npwda\"><br><br>\n" +
             "  <input type=\"submit\" value=\"Submit\">\n" +
             "  <input type=\"submit\" value=\"Cancel\">\n" +
+            "  <input type=\"hidden\" name=\"success\" value=\"%s\">\n" +
+            "  <input type=\"hidden\" name=\"failed\" value=\"%s\">\n" +
+            "  <input type=\"hidden\" name=\"type\" value=\"modify\">\n" +
             "</form> \n" +
+            "</div>\n" +
+            "</body>\n" +
+            "</html>";
+    public static final String REDIRECT = "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<head>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "<div>\n" +
+            "Token: %s<br>Redirect: %s<br>Message: %s" +
             "</div>\n" +
             "</body>\n" +
             "</html>";

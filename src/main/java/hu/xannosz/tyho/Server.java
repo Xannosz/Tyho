@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Server {
+
+    private Db db = new Db();
+
     public void createServer(int port) {
         HttpServer server;
         try {
@@ -34,13 +37,13 @@ public class Server {
             Map<String, String> map = getRequestMap(t.getRequestBody());
             Douplet<Integer, String> response;
             if (page.equals("login")) {
-                response = new Douplet<>(200, String.format(Constatns.LOGIN, map.get("css")));
+                response = new Douplet<>(200, String.format(Constatns.LOGIN, map.get("css"), map.get("success"), map.get("failed")));
             } else if (page.equals("registration")) {
-                response = new Douplet<>(200, String.format(Constatns.REGISTRATION, map.get("css")));
+                response = new Douplet<>(200, String.format(Constatns.REGISTRATION, map.get("css"), map.get("success"), map.get("failed")));
             } else if (page.equals("modify")) {
-                response = new Douplet<>(200, String.format(Constatns.MODIFY, map.get("css")));
+                response = new Douplet<>(200, String.format(Constatns.MODIFY, map.get("css"), map.get("success"), map.get("failed")));
             } else if (page.equals("execute")) {
-                response = new Douplet<>(200, "Map: "+ map);
+                response = new Douplet<>(200, execute(map));
             } else {
                 response = new Douplet<>(404, page + " page not found.");
             }
@@ -82,6 +85,29 @@ public class Server {
                 return input;
             }
         }
+    }
+
+    private String execute(Map<String, String> map) {
+        db.getData();
+        String token = null;
+        String message = null;
+        if (map.get("type").equals("login")) {
+            token = db.getToken(map.get("uname"), map.get("pwd"));
+        } else if (map.get("type").equals("registration")) {
+            if (db.registration(map.get("uname"), map.get("pwd"), map.get("pwda")).equals("success")) {
+                token = db.getToken(map.get("uname"), map.get("pwd"));
+            } else {
+                message = "Registration failed";
+            }
+        } else if (map.get("type").equals("modify")) {
+            if (db.modify(map.get("uname"), map.get("opwd"), map.get("npwd"), map.get("npwda")).equals("success")) {
+                token = db.getToken(map.get("uname"), map.get("npwd"));
+            } else {
+                message = "Password Modification failed";
+            }
+        }
+        db.writeData();
+        return String.format(Constatns.REDIRECT, token, token == null ? map.get("failed") : map.get("success"), message);
     }
 
     public class CSSHandler implements HttpHandler {

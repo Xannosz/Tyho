@@ -1,84 +1,103 @@
 package hu.xannosz.tyho;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import hu.xannosz.microtools.pack.Douplet;
+import lombok.Getter;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class Db {
 
-    private static final long EXPIRE_TIME = 1000 * 60 * 2; // Two minutes
-    private static final long DELETION_TIME = 1000 * 60 * 60 * 24 * 2; // Two days
-    private Map<String, String> userPasswords = new HashMap<>();
-    private Map<String, String> tokenUsers = new HashMap<>();
-    private Map<String, Date> tokenExpires = new HashMap<>();
-    private Map<String, Set<String>> userGroups = new HashMap<>();
-    private Map<String, Set<String>> groupPrivileges = new HashMap<>();
-    private Map<String, Set<String>> userPrivileges = new HashMap<>();
+    @Getter
+    private Configuration configuration = new Configuration();
+    private Data data;
 
     public void getData() {
+        Gson gson = new Gson();
+        JsonParser parser = new JsonParser();
 
+        try {
+            JsonObject dbObject = (JsonObject) parser.parse(FileUtils.readFileToString(new File(Constants.DB_FILE)));
+            data = gson.fromJson(dbObject, Data.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            data = new Data();
+        }
+
+        try {
+            JsonObject confObject = (JsonObject) parser.parse(FileUtils.readFileToString(new File(Constants.DB_FILE)));
+            configuration = gson.fromJson(confObject, Configuration.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            configuration = new Configuration();
+        }
     }
 
     public String getToken(String uName, String pwd) {
-        if (userPasswords.containsKey(uName) && userPasswords.get(uName).equals(pwd)) {
+        if (data.getUserPasswords().containsKey(uName) && data.getUserPasswords().get(uName).equals(pwd)) {
             String token = createToken();
-            tokenUsers.put(token, uName);
-            tokenExpires.put(token, new Date());
+            data.getTokenUsersExpires().put(token, new Douplet<>(uName, new Date()));
             return token;
         }
         return null;
     }
 
     public String modify(String uName, String oPwd, String nPwd, String nPwdA) {
-        if (nPwd.equals(nPwdA) && userPasswords.containsKey(uName) && userPasswords.get(uName).equals(oPwd)) {
-            userPasswords.put(uName, nPwd);
-            return "success";
+        if (nPwd.equals(nPwdA) && data.getUserPasswords().containsKey(uName) && data.getUserPasswords().get(uName).equals(oPwd)) {
+            data.getUserPasswords().put(uName, nPwd);
+            return Constants.SUCCESS;
         }
-        return "fail";
+        return Constants.FAILED;
     }
 
     public String registration(String uName, String pwd, String pwdA) {
-        if (pwd.equals(pwdA) && !userPasswords.containsKey(uName)) {
-            userPasswords.put(uName, pwd);
-            return "success";
+        if (pwd.equals(pwdA) && !data.getUserPasswords().containsKey(uName)) {
+            data.getUserPasswords().put(uName, pwd);
+            return Constants.SUCCESS;
         }
-        return "fail";
+        return Constants.FAILED;
     }
 
 
     public String getAccess(String token, String access) {
-        String user = tokenUsers.get(token);
+        Douplet<String, Date> user = data.getTokenUsersExpires().get(token);
         if (user == null) {
-            return "tokenNotExist";
+            return Constants.TOKEN_NOT_EXISTS;
         }
-        if (tokenExpires.get(token).getTime() + EXPIRE_TIME < (new Date()).getTime()) {
-            return "tokenExpired";
+        if (user.getSecond().getTime() + configuration.getExpireTime() < (new Date()).getTime()) {
+            return Constants.TOKEN_EXPIRED;
         }
-        tokenExpires.put(token, new Date());
-        if (!getPrivileges(user).contains(access)) {
-            return "accessDecided";
+        data.getTokenUsersExpires().put(token, new Douplet<>(user.getFirst(), new Date()));
+        if (!getPrivileges(user.getFirst()).contains(access)) {
+            return Constants.ACCESS_DECIDED;
         }
-        return "accessGranted";
+        return Constants.ACCESS_GRANTED;
     }
 
     public void clean() {
         Set<String> tokens = new HashSet<>();
-        for (Map.Entry<String, Date> token : tokenExpires.entrySet()) {
-            if (token.getValue().getTime() + DELETION_TIME < (new Date()).getTime()) {
+        for (Map.Entry<String, Douplet<String, Date>> token : data.getTokenUsersExpires().entrySet()) {
+            if (token.getValue().getSecond().getTime() + configuration.getDeletionTime() < (new Date()).getTime()) {
                 tokens.add(token.getKey());
             }
         }
         for (String token : tokens) {
-            tokenExpires.remove(token);
-            tokenUsers.remove(token);
+            data.getTokenUsersExpires().remove(token);
         }
     }
 
     private Set<String> getPrivileges(String user) {
         Set<String> result = new HashSet<>();
-        Set<String> groups = userGroups.get(user);
-        result.addAll(userPrivileges.get(user));
+        Set<String> groups = data.getUserGroups().get(user);
         for (String group : groups) {
-            result.addAll(groupPrivileges.get(group));
+            result.addAll(data.getGroupPrivileges().get(group));
         }
+        result.addAll(data.getUserPrivileges().get(user));
         return result;
     }
 
@@ -86,7 +105,24 @@ public class Db {
         return UUID.randomUUID().toString();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void writeData() {
-        System.out.println("Users: " + userPasswords);
+        clean();
+        Gson gson = new Gson();
+
+        try {
+            new File(Constants.DATA_DIR).mkdir();
+            new File(Constants.DB_FILE).createNewFile();
+            new File(Constants.CONFIGURATION_FILE).createNewFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileUtils.writeStringToFile(new File(Constants.DB_FILE), gson.toJson(data));
+            FileUtils.writeStringToFile(new File(Constants.CONFIGURATION_FILE), gson.toJson(configuration));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

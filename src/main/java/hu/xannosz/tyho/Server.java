@@ -35,22 +35,22 @@ public class Server {
             String page = tags[tags.length - 1];
             Map<String, String> map = getRequestMap(t.getRequestBody());
             Douplet<Integer, String> response;
-            if (page.equals("login")) {
-                response = new Douplet<>(200, String.format(Constatns.LOGIN, map.get("css"), map.get("success"), map.get("failed")));
-            } else if (page.equals("registration")) {
-                response = new Douplet<>(200, String.format(Constatns.REGISTRATION, map.get("css"), map.get("success"), map.get("failed")));
-            } else if (page.equals("modify")) {
-                response = new Douplet<>(200, String.format(Constatns.MODIFY, map.get("css"), map.get("success"), map.get("failed")));
-            } else if (page.equals("execute")) {
+            if (page.equals(Constants.LOGIN_PATH)) {
+                response = new Douplet<>(200, String.format(Constants.LOGIN, map.get(Constants.CSS), map.get(Constants.SUCCESS), map.get(Constants.FAILED)));
+            } else if (page.equals(Constants.REGISTRATION_PATH)) {
+                response = new Douplet<>(200, String.format(Constants.REGISTRATION, map.get(Constants.CSS), map.get(Constants.SUCCESS), map.get(Constants.FAILED)));
+            } else if (page.equals(Constants.MODIFY_PATH)) {
+                response = new Douplet<>(200, String.format(Constants.MODIFY, map.get(Constants.CSS), map.get(Constants.SUCCESS), map.get(Constants.FAILED)));
+            } else if (page.equals(Constants.EXECUTE_PATH)) {
                 response = new Douplet<>(200, execute(map));
-            } else if (page.equals("justOut")) {
-                response = new Douplet<>(200, "Map: "+map);
-            } else if (page.equals("validate")) {
-                response = new Douplet<>(200, db.getAccess(map.get("token"),map.get("access")));
-            } else{
+            } else if (page.equals("justOut")) { //TODO remove
+                response = new Douplet<>(200, "Map: " + map);
+            } else if (page.equals(Constants.VALIDATE_PATH)) {
+                response = new Douplet<>(200, db.getAccess(map.get(Constants.TOKEN), map.get(Constants.ACCESS)));
+            } else {
                 response = new Douplet<>(404, page + " page not found.");
             }
-            byte[] responseSyntax = response.getSecond().getBytes(Constatns.ENCODING);
+            byte[] responseSyntax = response.getSecond().getBytes(Constants.ENCODING);
             t.sendResponseHeaders(response.getFirst(), responseSyntax.length);
             OutputStream os = t.getResponseBody();
             os.write(responseSyntax);
@@ -63,7 +63,7 @@ public class Server {
             Map<String, String> result = new HashMap<>();
 
             try {
-                IOUtils.copy(requestBody, writer, Constatns.ENCODING);
+                IOUtils.copy(requestBody, writer, Constants.ENCODING);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -82,7 +82,7 @@ public class Server {
 
         private String characterRecombinator(String input) {
             try {
-                return URLDecoder.decode(input, Constatns.ENCODING);
+                return URLDecoder.decode(input, Constants.ENCODING);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 return input;
@@ -94,23 +94,23 @@ public class Server {
         db.getData();
         String token = null;
         String message = null;
-        if (map.get("type").equals("login")) {
-            token = db.getToken(map.get("uname"), map.get("pwd"));
-        } else if (map.get("type").equals("registration")) {
-            if (db.registration(map.get("uname"), map.get("pwd"), map.get("pwda")).equals("success")) {
-                token = db.getToken(map.get("uname"), map.get("pwd"));
+        if (map.get(Constants.TYPE).equals(Constants.LOGIN_PATH)) {
+            token = db.getToken(map.get(Constants.U_NAME), map.get(Constants.PWD));
+        } else if (map.get(Constants.TYPE).equals(Constants.REGISTRATION_PATH)) {
+            if (db.registration(map.get(Constants.U_NAME), map.get(Constants.PWD), map.get(Constants.PWD_A)).equals(Constants.SUCCESS)) {
+                token = db.getToken(map.get(Constants.U_NAME), map.get(Constants.PWD));
             } else {
                 message = "Registration failed";
             }
-        } else if (map.get("type").equals("modify")) {
-            if (db.modify(map.get("uname"), map.get("opwd"), map.get("npwd"), map.get("npwda")).equals("success")) {
-                token = db.getToken(map.get("uname"), map.get("npwd"));
+        } else if (map.get(Constants.TYPE).equals(Constants.MODIFY_PATH)) {
+            if (db.modify(map.get(Constants.U_NAME), map.get(Constants.O_PWD), map.get(Constants.N_PWD), map.get(Constants.N_PWD_A)).equals(Constants.SUCCESS)) {
+                token = db.getToken(map.get(Constants.U_NAME), map.get(Constants.N_PWD));
             } else {
                 message = "Password Modification failed";
             }
         }
         db.writeData();
-        return String.format(Constatns.REDIRECT, token == null ? map.get("failed") : map.get("success"),token, message);
+        return String.format(Constants.REDIRECT, token == null ? map.get(Constants.FAILED) : map.get(Constants.SUCCESS), token, message);
     }
 
     public class CSSHandler implements HttpHandler {
@@ -124,7 +124,7 @@ public class Server {
             } else {
                 response = new Douplet<>(404, id + " theme not found.");
             }
-            byte[] responseSyntax = response.getSecond().getBytes(Constatns.ENCODING);
+            byte[] responseSyntax = response.getSecond().getBytes(Constants.ENCODING);
             t.sendResponseHeaders(response.getFirst(), responseSyntax.length);
             OutputStream os = t.getResponseBody();
             os.write(responseSyntax);

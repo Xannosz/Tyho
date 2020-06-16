@@ -46,6 +46,7 @@ public class Server {
             } else if (page.equals("justOut")) { //TODO remove
                 response = new Douplet<>(200, "Map: " + map);
             } else if (page.equals(Constants.VALIDATE_PATH)) {
+                db.getData();
                 response = new Douplet<>(200, db.getAccess(map.get(Constants.TOKEN), map.get(Constants.ACCESS)));
             } else {
                 response = new Douplet<>(404, page + " page not found.");

@@ -16,7 +16,7 @@ public class Constants {
 
     public static final String TOKEN_NOT_EXISTS = "Token Not Exists";
     public static final String TOKEN_EXPIRED = "Token Expired";
-    public static final String ACCESS_DECIDED = "Access Decided";
+    public static final String ACCESS_DENIED = "Access Denied";
     public static final String ACCESS_GRANTED = "Access Granted";
 
     public static final String LOGIN_PATH = "login";

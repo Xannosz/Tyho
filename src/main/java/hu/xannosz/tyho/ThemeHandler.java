@@ -8,7 +8,7 @@ public class ThemeHandler {
 
     public static String getTheme(String name) {
         try {
-            return FileUtils.readFileToString(new File("css/" + name + ".css"));
+            return FileUtils.readFileToString(new File("css/" + (name==null?"base":name) + ".css"));
         } catch (Exception e) {
             e.printStackTrace();
             return "";

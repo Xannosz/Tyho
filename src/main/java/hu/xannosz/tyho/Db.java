@@ -74,7 +74,7 @@ public class Db {
         }
         data.getTokenUsersExpires().put(token, new Douplet<>(user.getFirst(), new Date()));
         if (!getPrivileges(user.getFirst()).contains(access)) {
-            return Constants.ACCESS_DECIDED;
+            return Constants.ACCESS_DENIED;
         }
         return Constants.ACCESS_GRANTED;
     }
@@ -94,10 +94,18 @@ public class Db {
     private Set<String> getPrivileges(String user) {
         Set<String> result = new HashSet<>();
         Set<String> groups = data.getUserGroups().get(user);
-        for (String group : groups) {
-            result.addAll(data.getGroupPrivileges().get(group));
+        if (groups != null) {
+            for (String group : groups) {
+                Set<String> privileges = data.getGroupPrivileges().get(group);
+                if (privileges != null) {
+                    result.addAll(privileges);
+                }
+            }
         }
-        result.addAll(data.getUserPrivileges().get(user));
+        Set<String> privileges = data.getUserPrivileges().get(user);
+        if (privileges != null) {
+            result.addAll(privileges);
+        }
         return result;
     }
 

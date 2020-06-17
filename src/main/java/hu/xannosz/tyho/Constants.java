@@ -44,7 +44,6 @@ public class Constants {
             "  <label for=\"" + PWD + "\">Password:</label><br>\n" +
             "  <input type=\"password\" id=\"" + PWD + "\" name=\"" + PWD + "\"><br><br>\n" +
             "  <input type=\"submit\" value=\"Submit\">\n" +
-            "  <input type=\"submit\" value=\"Cancel\">\n" +
             "  <input type=\"hidden\" name=\"" + SUCCESS + "\" value=\"%s\">\n" +
             "  <input type=\"hidden\" name=\"" + FAILED + "\" value=\"%s\">\n" +
             "  <input type=\"hidden\" name=\"" + TYPE + "\" value=\"" + LOGIN_PATH + "\">" + HTML_FOOT;
@@ -56,7 +55,6 @@ public class Constants {
             "  <label for=\"" + PWD_A + "\">Password again:</label><br>\n" +
             "  <input type=\"password\" id=\"" + PWD_A + "\" name=\"" + PWD_A + "\"><br><br>\n" +
             "  <input type=\"submit\" value=\"Submit\">\n" +
-            "  <input type=\"submit\" value=\"Cancel\">\n" +
             "  <input type=\"hidden\" name=\"" + SUCCESS + "\" value=\"%s\">\n" +
             "  <input type=\"hidden\" name=\"" + FAILED + "\" value=\"%s\">\n" +
             "  <input type=\"hidden\" name=\"" + TYPE + "\" value=\"" + REGISTRATION_PATH + "\">\n" +
@@ -71,7 +69,6 @@ public class Constants {
             "  <label for=\"" + N_PWD_A + "\">New Password again:</label><br>\n" +
             "  <input type=\"password\" id=\"" + N_PWD_A + "\" name=\"" + N_PWD_A + "\"><br><br>\n" +
             "  <input type=\"submit\" value=\"Submit\">\n" +
-            "  <input type=\"submit\" value=\"Cancel\">\n" +
             "  <input type=\"hidden\" name=\"" + SUCCESS + "\" value=\"%s\">\n" +
             "  <input type=\"hidden\" name=\"" + FAILED + "\" value=\"%s\">\n" +
             "  <input type=\"hidden\" name=\"" + TYPE + "\" value=\"" + MODIFY_PATH + "\">\n" +

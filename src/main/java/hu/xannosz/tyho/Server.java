@@ -38,16 +38,22 @@ public class Server {
             if (page.equals(Constants.LOGIN_PATH)) {
                 response = new Douplet<>(200, String.format(Constants.LOGIN, map.get(Constants.CSS), map.get(Constants.SUCCESS), map.get(Constants.FAILED)));
             } else if (page.equals(Constants.REGISTRATION_PATH)) {
-                response = new Douplet<>(200, String.format(Constants.REGISTRATION, map.get(Constants.CSS), map.get(Constants.SUCCESS), map.get(Constants.FAILED)));
+                db.getData();
+                if (db.getConfiguration().isEnableRegistration()) {
+                    response = new Douplet<>(200, String.format(Constants.REGISTRATION, map.get(Constants.CSS), map.get(Constants.SUCCESS), map.get(Constants.FAILED)));
+                } else {
+                    response = new Douplet<>(404, page + " page not found.");
+                }
             } else if (page.equals(Constants.MODIFY_PATH)) {
                 response = new Douplet<>(200, String.format(Constants.MODIFY, map.get(Constants.CSS), map.get(Constants.SUCCESS), map.get(Constants.FAILED)));
             } else if (page.equals(Constants.EXECUTE_PATH)) {
                 response = new Douplet<>(200, execute(map));
-            } else if (page.equals("justOut")) { //TODO remove
+            } else if (page.equals("null")) {
                 response = new Douplet<>(200, "Map: " + map);
             } else if (page.equals(Constants.VALIDATE_PATH)) {
                 db.getData();
-                response = new Douplet<>(200, db.getAccess(map.get(Constants.TOKEN), map.get(Constants.ACCESS)));
+                Map<String, String> input = getRequestMap(new ByteArrayInputStream(t.getRequestURI().getQuery().getBytes(Constants.ENCODING)));
+                response = new Douplet<>(200, db.getAccess(input.get(Constants.TOKEN), input.get(Constants.ACCESS)));
             } else {
                 response = new Douplet<>(404, page + " page not found.");
             }
@@ -97,7 +103,7 @@ public class Server {
         String message = null;
         if (map.get(Constants.TYPE).equals(Constants.LOGIN_PATH)) {
             token = db.getToken(map.get(Constants.U_NAME), map.get(Constants.PWD));
-        } else if (map.get(Constants.TYPE).equals(Constants.REGISTRATION_PATH)) {
+        } else if (map.get(Constants.TYPE).equals(Constants.REGISTRATION_PATH) && db.getConfiguration().isEnableRegistration()) {
             if (db.registration(map.get(Constants.U_NAME), map.get(Constants.PWD), map.get(Constants.PWD_A)).equals(Constants.SUCCESS)) {
                 token = db.getToken(map.get(Constants.U_NAME), map.get(Constants.PWD));
             } else {
@@ -119,7 +125,7 @@ public class Server {
             String[] tags = t.getRequestURI().getPath().split("/");
             String id = tags[tags.length - 1];
             Douplet<Integer, String> response;
-            String theme = ThemeHandler.getTheme(id);
+            String theme = ThemeHandler.getTheme(db.getConfiguration().isEnableCSSSetting() ? id : "null");
             if (theme != null) {
                 response = new Douplet<>(200, theme);
             } else {

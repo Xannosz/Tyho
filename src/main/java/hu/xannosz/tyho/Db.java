@@ -58,6 +58,9 @@ public class Db {
     public String registration(String uName, String pwd, String pwdA) {
         if (pwd.equals(pwdA) && !data.getUserPasswords().containsKey(uName)) {
             data.getUserPasswords().put(uName, pwd);
+            if (configuration.isUseDefaultGroup()) {
+                data.getUserGroups().put(uName, Collections.singleton(configuration.getDefaultGroupName()));
+            }
             return Constants.SUCCESS;
         }
         return Constants.FAILED;
@@ -110,7 +113,13 @@ public class Db {
     }
 
     private String createToken() {
-        return UUID.randomUUID().toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append(UUID.randomUUID());
+        for (int i = 0; i < configuration.getTokenLength(); i++) {
+            builder.append("-");
+            builder.append(UUID.randomUUID());
+        }
+        return builder.toString();
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

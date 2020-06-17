@@ -1,0 +1,38 @@
+body {
+  background-color: white;
+  padding: 0;
+}
+div {
+  background-color: lightblue;
+  color: white;
+  margin: 5% 20% 5% 20%;
+  text-align: center;
+  padding: 2px;
+  vertical-align: center;
+  border-radius: 50px 20px;
+}
+input {
+  margin: 1%;
+  text-align: left;
+  border-radius: 50px 20px;
+}
+input:hover {
+  background-color: white;
+}
+tbody,table {
+  border-radius: 50px 20px;
+  background-color: white;
+  color: black;
+  border: 2px;
+  border-style: solid;
+  padding: 2%;
+  margin: 4%;
+}
+tr {
+  border: 1px;
+  border-style: solid;
+}
+td {
+  border: 1px;
+  border-style: solid;
+}

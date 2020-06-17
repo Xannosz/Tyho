@@ -1,26 +1,29 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
     <head>
+		<link rel="stylesheet" type="text/css" href="restaurant.css">
     </head>
     <body>
         <div>
-            <form action="http://localhost:8000/login" method="post">
-                <input type="submit" value="Login">
-                <input type="hidden" name="success" value="http://localhost:8000/justOut">
-                <input type="hidden" name="failed" value="http://localhost:8000/justOut">
-                <input type="hidden" name="css" value="basic">
+			<h1>Access to the restaurant's storage:</h1>
+			<p>Please choose one from the options</p>
+            <form action="http://apollo.xannosz.cloud:8000/login" method="post">
+                <input type="submit" value="Sign in">
+                <input type="hidden" name="success" value="http://apollo.xannosz.cloud/storage.html">
+                <input type="hidden" name="failed" value="http://apollo.xannosz.cloud">
+                <input type="hidden" name="css" value="restaurant">
             </form>
-            <form action="http://localhost:8000/modify" method="post">
-                <input type="submit" value="Modify Password">
-                <input type="hidden" name="success" value="http://localhost:8000/justOut">
-                <input type="hidden" name="failed" value="http://localhost:8000/justOut">
-                <input type="hidden" name="css" value="basic">
+            <form action="http://apollo.xannosz.cloud:8000/modify" method="post">
+                <input type="submit" value="Password change">
+                <input type="hidden" name="success" value="http://apollo.xannosz.cloud/storage.html">
+                <input type="hidden" name="failed" value="http://apollo.xannosz.cloud">
+                <input type="hidden" name="css" value="restaurant">
             </form>
-            <form action="http://localhost:8000/registration" method="post">
-                <input type="submit" value="Registration">
-                <input type="hidden" name="success" value="http://localhost:8000/justOut">
-                <input type="hidden" name="failed" value="http://localhost:8000/justOut">
-                <input type="hidden" name="css" value="basic">
+            <form action="http://apollo.xannosz.cloud:8000/registration" method="post">
+                <input type="submit" value="Sign up">
+                <input type="hidden" name="success" value="http://apollo.xannosz.cloud/storage.html">
+                <input type="hidden" name="failed" value="http://apollo.xannosz.cloud">
+                <input type="hidden" name="css" value="restaurant">
             </form>
         </div>
     </body>

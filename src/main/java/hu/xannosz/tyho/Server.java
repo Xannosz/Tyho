@@ -117,7 +117,7 @@ public class Server {
             }
         }
         db.writeData();
-        return String.format(Constants.REDIRECT, token == null ? map.get(Constants.FAILED) : map.get(Constants.SUCCESS), token, message);
+        return String.format(Constants.REDIRECT, token == null ? map.get(Constants.FAILED) : map.get(Constants.SUCCESS), token, message,token);
     }
 
     public class CSSHandler implements HttpHandler {

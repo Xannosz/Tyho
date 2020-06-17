@@ -75,11 +75,15 @@ public class Constants {
             HTML_FOOT;
     public static final String REDIRECT = "<!DOCTYPE html><html><head></head><body><div>\n" +
             "<form name=\"inputForm\" action=\"%s\" method=\"post\">\n" +
-            "    <input type=\"hidden\" name=\"token\" value=\"%s\" />\n" +
+            "    <input type=\"hidden\" name=\"token\" value=\"%s\"/>\n" +
             "    <input type=\"hidden\" name=\"message\" value=\"%s\" />\n" +
             "</form>" +
             "<script type=\"text/javascript\">\n" +
-            "    document.inputForm.submit();\n" +
+            "var today = new Date();\n" +
+            "var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days\n" +
+            "document.cookie = \"authorizationToken=%s; path=/; expires=\" + expiry.toGMTString();\n" +
+            "console.log(document.cookie);\n" +
+            "document.inputForm.submit();\n" +
             "</script>" +
             "</div></body></html>";
 }

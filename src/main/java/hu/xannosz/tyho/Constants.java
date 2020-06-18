@@ -73,7 +73,7 @@ public class Constants {
             "  <input type=\"hidden\" name=\"" + FAILED + "\" value=\"%s\">\n" +
             "  <input type=\"hidden\" name=\"" + TYPE + "\" value=\"" + MODIFY_PATH + "\">\n" +
             HTML_FOOT;
-    public static final String REDIRECT = "<!DOCTYPE html><html><head></head><body><div>\n" +
+    public static final String REDIRECT_WITH_COOKIE = "<!DOCTYPE html><html><head></head><body><div>\n" +
             "<form name=\"inputForm\" action=\"%s\" method=\"post\">\n" +
             "    <input type=\"hidden\" name=\"token\" value=\"%s\"/>\n" +
             "    <input type=\"hidden\" name=\"message\" value=\"%s\" />\n" +
@@ -83,6 +83,17 @@ public class Constants {
             "var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days\n" +
             "document.cookie = \"authorizationToken=%s; path=/; expires=\" + expiry.toGMTString();\n" +
             "console.log(document.cookie);\n" +
+            "document.inputForm.submit();\n" +
+            "</script>" +
+            "</div></body></html>";
+
+    public static final String REDIRECT_WITHOUT_COOKIE = "<!DOCTYPE html><html><head></head><body><div>\n" +
+            "<form name=\"inputForm\" action=\"%s\" method=\"post\">\n" +
+            "    <input type=\"hidden\" name=\"token\" value=\"%s\"/>\n" +
+            "    <input type=\"hidden\" name=\"message\" value=\"%s\" />\n" +
+            "</form>" +
+            "<script type=\"text/javascript\">\n" +
+            "console.log(%s);\n" +
             "document.inputForm.submit();\n" +
             "</script>" +
             "</div></body></html>";

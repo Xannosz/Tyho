@@ -24,7 +24,11 @@ public class Configuration {
     @Getter
     private int deleteLogFilesAfterSize = 10;  // It is in MiB
     @Getter
-    private boolean enableTokenInBody = true;
-    @Getter
     private boolean enableTokenInCookie = true;
+    @Getter
+    private boolean useExternalDb = false;
+    @Getter
+    private String externalDbQueryURL = "";
+    @Getter
+    private String externalDbSetURL = "";
 }

@@ -9,6 +9,7 @@
 	<organization>
 		<name>xannosz</name>
 	</organization>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -56,12 +57,10 @@
 					</archive>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.1.1</version>
-
 				<configuration>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
@@ -76,7 +75,6 @@
 						</manifest>
 					</archive>
 				</configuration>
-
 				<executions>
 					<execution>
 						<id>make-assembly</id>
@@ -86,10 +84,10 @@
 						</goals>
 					</execution>
 				</executions>
-
 			</plugin>
 		</plugins>
 	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

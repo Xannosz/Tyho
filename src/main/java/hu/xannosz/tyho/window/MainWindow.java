@@ -11,6 +11,7 @@ import hu.xannosz.tyho.factory.ConfigurationFactory;
 import hu.xannosz.tyho.util.Configuration;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainWindow extends BasicWindow implements WindowListener {
@@ -25,22 +26,17 @@ public class MainWindow extends BasicWindow implements WindowListener {
     private final Panel rightPanel = new SidePanel();
     private final Panel bottomPanel = new SidePanel();
 
+    private final List<Panel> panels = Arrays.asList(topLine, leftMenu, rightMenu, bottomMenu, mainPanel, leftPanel, rightPanel, bottomPanel);
+    private int selected = 4;
+
     private TerminalSize size;
 
     public MainWindow() {
         Panel content = new Panel();
-        content.addComponent(topLine);
-        content.addComponent(leftMenu);
-        content.addComponent(rightMenu);
-        content.addComponent(bottomMenu);
 
-        content.addComponent(mainPanel);
-        content.addComponent(leftPanel);
-        content.addComponent(rightPanel);
-        content.addComponent(bottomPanel);
+        panels.forEach(content::addComponent);
 
         content.setLayoutManager(null);
-
 
         addWindowListener(this);
         setHints(Arrays.asList(Window.Hint.NO_DECORATIONS, Window.Hint.FULL_SCREEN));
@@ -61,28 +57,44 @@ public class MainWindow extends BasicWindow implements WindowListener {
     @Override
     public void onInput(Window window, KeyStroke keyStroke, AtomicBoolean atomicBoolean) {
         Configuration config = ConfigurationFactory.getConfiguration();
-
-        if (keyStroke.isCtrlDown() && keyStroke.isShiftDown()) {
+        if (keyStroke.isCtrlDown()) {
             switch (keyStroke.getKeyType()) {
                 case ArrowLeft:
-                    if (keyStroke.isAltDown()) {
-                        config.setLeftMenuEnabled(!config.isLeftMenuEnabled());
+                    if (keyStroke.isShiftDown()) {
+                        if (keyStroke.isAltDown()) {
+                            config.setLeftMenuEnabled(!config.isLeftMenuEnabled());
+                        } else {
+                            config.setLeftPanelOpened(!config.isLeftPanelOpened());
+                        }
                     } else {
-                        config.setLeftPanelOpened(!config.isLeftPanelOpened());
+                        setNewFocus(Direction.WEST);
                     }
                     break;
                 case ArrowRight:
-                    if (keyStroke.isAltDown()) {
-                        config.setRightMenuEnabled(!config.isRightMenuEnabled());
+                    if (keyStroke.isShiftDown()) {
+                        if (keyStroke.isAltDown()) {
+                            config.setRightMenuEnabled(!config.isRightMenuEnabled());
+                        } else {
+                            config.setRightPanelOpened(!config.isRightPanelOpened());
+                        }
                     } else {
-                        config.setRightPanelOpened(!config.isRightPanelOpened());
+                        setNewFocus(Direction.EAST);
                     }
                     break;
                 case ArrowDown:
-                    if (keyStroke.isAltDown()) {
-                        config.setBottomMenuEnabled(!config.isBottomMenuEnabled());
+                    if (keyStroke.isShiftDown()) {
+                        if (keyStroke.isAltDown()) {
+                            config.setBottomMenuEnabled(!config.isBottomMenuEnabled());
+                        } else {
+                            config.setBottomPanelOpened(!config.isBottomPanelOpened());
+                        }
                     } else {
-                        config.setBottomPanelOpened(!config.isBottomPanelOpened());
+                        setNewFocus(Direction.SOUTH);
+                    }
+                    break;
+                case ArrowUp:
+                    if (!keyStroke.isShiftDown()) {
+                        setNewFocus(Direction.NORTH);
                     }
                     break;
                 default:
@@ -119,14 +131,7 @@ public class MainWindow extends BasicWindow implements WindowListener {
                 size.getColumns() - rightMenu.getSize().getColumns() - rightPanel.getSize().getColumns() - leftMenu.getSize().getColumns() - leftPanel.getSize().getColumns(),
                 size.getRows() - bottomPanel.getSize().getRows() - 1 - bottomMenu.getSize().getRows());
 
-        topLine.invalidate();
-        leftMenu.invalidate();
-        rightMenu.invalidate();
-        bottomMenu.invalidate();
-        leftPanel.invalidate();
-        rightPanel.invalidate();
-        bottomPanel.invalidate();
-        mainPanel.invalidate();
+        panels.forEach(Panel::invalidate);
     }
 
     private void setSize(boolean enabled, Panel panel, int x, int y, int w, int h) {
@@ -144,5 +149,164 @@ public class MainWindow extends BasicWindow implements WindowListener {
 
     private void setSizeZero(Panel panel) {
         setSize(panel, 0, 0, 0, 0);
+    }
+
+    private void setNewFocus(Direction direction) {
+        Configuration config = ConfigurationFactory.getConfiguration();
+        switch (selected) {
+            case 0: // topLine
+                switch (direction) {
+                    case EAST:
+                        selected = 2;
+                        return;
+                    case WEST:
+                        selected = 1;
+                        return;
+                    case NORTH:
+                        return;
+                    case SOUTH:
+                        selected = 4;
+                        return;
+                }
+            case 1: // leftMenu
+                switch (direction) {
+                    case EAST:
+                        if (config.isLeftPanelOpened()) {
+                            selected = 5;
+                        } else {
+                            selected = 4;
+                        }
+                        return;
+                    case WEST:
+                        return;
+                    case NORTH:
+                        selected = 0;
+                        return;
+                    case SOUTH:
+                        selected = 3;
+                        return;
+                }
+            case 2: // rightMenu
+                switch (direction) {
+                    case EAST:
+                        return;
+                    case WEST:
+                        if (config.isRightPanelOpened()) {
+                            selected = 6;
+                        } else {
+                            selected = 4;
+                        }
+                        return;
+                    case NORTH:
+                        selected = 0;
+                        return;
+                    case SOUTH:
+                        selected = 3;
+                        return;
+                }
+            case 3: // bottomMenu
+                switch (direction) {
+                    case EAST:
+                        selected = 1;
+                        return;
+                    case WEST:
+                        selected = 2;
+                        return;
+                    case NORTH:
+                        if (config.isBottomPanelOpened()) {
+                            selected = 7;
+                        } else {
+                            selected = 4;
+                        }
+                        return;
+                    case SOUTH:
+                        return;
+                }
+            case 4: // mainPanel
+                switch (direction) {
+                    case EAST:
+                        if (config.isRightPanelOpened()) {
+                            selected = 6;
+                        } else {
+                            selected = 2;
+                        }
+                        return;
+                    case WEST:
+                        if (config.isLeftPanelOpened()) {
+                            selected = 5;
+                        } else {
+                            selected = 1;
+                        }
+                        return;
+                    case NORTH:
+                        selected = 0;
+                        return;
+                    case SOUTH:
+                        if (config.isBottomPanelOpened()) {
+                            selected = 7;
+                        } else {
+                            selected = 3;
+                        }
+                        return;
+                }
+            case 5: //leftPanel
+                switch (direction) {
+                    case EAST:
+                        selected = 4;
+                        return;
+                    case WEST:
+                        selected = 1;
+                        return;
+                    case NORTH:
+                        selected = 0;
+                        return;
+                    case SOUTH:
+                        if (config.isBottomPanelOpened()) {
+                            selected = 7;
+                        } else {
+                            selected = 3;
+                        }
+                        return;
+                }
+            case 6: // rightPanel
+                switch (direction) {
+                    case EAST:
+                        selected = 2;
+                        return;
+                    case WEST:
+                        selected = 4;
+                        return;
+                    case NORTH:
+                        selected = 0;
+                        return;
+                    case SOUTH:
+                        if (config.isBottomPanelOpened()) {
+                            selected = 7;
+                        } else {
+                            selected = 3;
+                        }
+                        return;
+                }
+            case 7: // bottomPanel
+                switch (direction) {
+                    case EAST:
+                        selected = 2;
+                        return;
+                    case WEST:
+                        selected = 1;
+                        return;
+                    case NORTH:
+                        selected = 4;
+                        return;
+                    case SOUTH:
+                        selected = 3;
+                        return;
+                }
+            default:
+        }
+    }
+
+    public enum Direction {
+        NORTH, EAST, WEST, SOUTH
     }
 }
